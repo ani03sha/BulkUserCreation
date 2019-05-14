@@ -14,8 +14,8 @@
 	margin-left: -12px;
 	margin-bottom: 16px;
 }
-
-.red-quark-create-users .file-upload input {
+  
+.red-quark-create-users .file-upload input[type="file"] {
 	position: absolute;
 	margin: 0;
 	padding: 0;
@@ -37,7 +37,7 @@
 	z-index: -1;
 }
 
-.red-quark-create-users button {
+.red-quark-create-users input[type="submit"] {
 	margin: 0;
 	color: #fff;
 	background: #326ec8;
@@ -85,11 +85,10 @@
 	}
 </script>
 
-<form class="create-user-form">
+<form>
 	<div class="file-upload">
-		<input type="file" id="fileToUpload" onchange="validate(this.value)">
+		<input type="file" id="fileToUpload" name="fileToUpload" onchange="validate(this.value)">
 		<p>Drag your files here or click in this area.</p>
 	</div>
-	<button id="uploadFileBtn" type="submit" class="upload-btn-submit"
-		disabled>Upload</button>
+	<input type="submit" id="uploadFileBtn" name="submit" value="Upload" class="upload-btn-submit" disabled>
 </form>
