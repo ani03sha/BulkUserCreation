@@ -10,7 +10,7 @@
                 jcr:description="Create users in bulk"
                 jcr:primaryType="nt:unstructured"
                 jcr:title="Bulk Users"
-                href="/apps/excelApp/admin/ext/createusers/content/createusers.html"
+                href="/apps/bulkusercreation/admin/ext/createusers/content/createusers.html"
                 icon="user"
                 id="granite-security-users-users"/>
         </redquark>
