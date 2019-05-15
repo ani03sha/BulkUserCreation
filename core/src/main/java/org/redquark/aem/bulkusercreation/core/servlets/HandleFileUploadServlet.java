@@ -22,6 +22,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.redquark.aem.bulkusercreation.core.models.UserDetails;
 import org.redquark.aem.bulkusercreation.core.services.FileReaderService;
+import org.redquark.aem.bulkusercreation.core.services.UserCreationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,11 @@ public class HandleFileUploadServlet extends SlingAllMethodsServlet {
 	
 	// Injecting reference of the FileReaderService
 	@Reference
-	private FileReaderService FileReaderService;
+	private FileReaderService fileReaderService;
+	
+	// Injecting reference of the UserCreationService
+	@Reference
+	private UserCreationService userCreationService;
 
 	@Override
 	protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) {
@@ -102,14 +107,19 @@ public class HandleFileUploadServlet extends SlingAllMethodsServlet {
 				printWriter.println("File uploaded successfully");
 				
 				// Getting the list of users from the excel file
-				List<UserDetails> users = FileReaderService.readExcel(createdFilePath);
+				List<UserDetails> users = fileReaderService.readExcel(createdFilePath);
 				
 				log.info("Users have been read from the file");
-				
 				printWriter.println("Users have been read from the file");
 				
 				// Deleting the temporary file
 				file.delete();
+				
+				// Creating users in the AEM instance
+				userCreationService.createUsers(users);
+				
+				log.info("Users have been created successfully");
+				printWriter.println("Users have been created successfully");
 				
 			}
 		} catch (Exception e) {
