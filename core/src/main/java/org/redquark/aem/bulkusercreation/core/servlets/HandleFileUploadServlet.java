@@ -1,8 +1,11 @@
 package org.redquark.aem.bulkusercreation.core.servlets;
 
+import static org.redquark.aem.bulkusercreation.core.constants.AppConstants.EMPTY_STRING;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Servlet;
@@ -16,6 +19,9 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.redquark.aem.bulkusercreation.core.models.UserDetails;
+import org.redquark.aem.bulkusercreation.core.services.FileReaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +45,10 @@ public class HandleFileUploadServlet extends SlingAllMethodsServlet {
 
 	// PrintWriter instance to set response
 	private PrintWriter printWriter;
+	
+	// Injecting reference of the FileReaderService
+	@Reference
+	private FileReaderService FileReaderService;
 
 	@Override
 	protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) {
@@ -52,10 +62,15 @@ public class HandleFileUploadServlet extends SlingAllMethodsServlet {
 
 			// Setting the temporary file path - This path will be on the server from
 			// where the AEM is running
-			tempFilePath = System.getProperty("user.dir") + "\\crx-quickstart";
+			tempFilePath = System.getProperty("user.dir");
 
 			// Getting the writer instance from the response object
 			printWriter = response.getWriter();
+			
+			String createdFilePath = EMPTY_STRING;
+			
+			// Temporary file
+			File file = null;
 
 			if (isMultipart) {
 
@@ -76,13 +91,26 @@ public class HandleFileUploadServlet extends SlingAllMethodsServlet {
 						InputStream inputStream = parameter.getInputStream();
 
 						// Creating a temporary file
-						File file = File.createTempFile("sample", ".xlsx", new File(tempFilePath));
+						file = File.createTempFile("sample", ".xlsx", new File(tempFilePath));
 
 						// Writing contents from input stream to the temporary file
 						FileUtils.copyInputStreamToFile(inputStream, file);
+						
+						createdFilePath = file.getAbsolutePath();
 					}
 				}
 				printWriter.println("File uploaded successfully");
+				
+				// Getting the list of users from the excel file
+				List<UserDetails> users = FileReaderService.readExcel(createdFilePath);
+				
+				log.info("Users have been read from the file");
+				
+				printWriter.println("Users have been read from the file");
+				
+				// Deleting the temporary file
+				file.delete();
+				
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
