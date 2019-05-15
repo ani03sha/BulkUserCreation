@@ -1,58 +1,37 @@
-# Sample AEM project template
+# Bulk User Creation
 
-This is a project template for AEM-based applications. It is intended as a best-practice set of examples as well as a potential starting point to develop your own functionality.
+Sometimes it so happens that we need to create many users in the AEM and to add them in a desired group. We can do this in AEM Useradmin console manually. But this process is tedious and inefficient. 
 
-## Modules
+In most of the cases, we get the users in a file with their details (firstname, lastname, username, group, email, password etc.). Wouldn't it be easier if we just upload the file in our AEM instance and the users are created in the AEM server automatically?
 
-The main parts of the template are:
+Therefore, I decided to create an AEM project that does exactly that. In this project, a user can go to a custom console that is created and upload an excel file with the details of the users.
 
-* core: Java bundle containing all core functionality like OSGi services, listeners or schedulers, as well as component-related Java code such as servlets or request filters.
-* ui.apps: contains the /apps (and /etc) parts of the project, ie JS&CSS clientlibs, components, templates, runmode specific configs as well as Hobbes-tests
-* ui.content: contains sample content using the components from the ui.apps
-* ui.tests: Java bundle containing JUnit tests that are executed server-side. This bundle is not to be deployed onto production.
-* ui.launcher: contains glue code that deploys the ui.tests bundle (and dependent bundles) to the server and triggers the remote JUnit execution
+## Steps to configure
 
-## How to build
+For this, you can refer to my blog - [Create users in AEM from excel file](https://aem.redquark.org/2019/05/create-users-in-aem-from-excel-file.html).
 
-To build all the modules run in the project root directory the following command with Maven 3:
+## How does it work?
 
-    mvn clean install
+Here, we are creating following things -
+1. Custom console in the "Tools" menu of the AEM server
+2. Apache POI utility service reads the excel file and create a list containing all the users with their details.
+3. The list creates is then passed to the user creation service which then creates users one by one using **org.apache.jackrabbit.api.security.user.UserManager** API.
 
-If you have a running AEM instance you can build and package the whole project and deploy into AEM with  
+## Issues
 
-    mvn clean install -PautoInstallPackage
-    
-Or to deploy it to a publish instance, run
+If you face any issues or problems, you are welcome to open issues. You can do this by following steps - 
 
-    mvn clean install -PautoInstallPackagePublish
-    
-Or alternatively
+* Go to the Issues tab in the repository
+* Click on New issue button
+* Give appropriate title to the issue
+* Add detailed description of the issue and if possible, steps to reproduce
+* Click on Open issue button
 
-    mvn clean install -PautoInstallPackage -Daem.port=4503
+## How to contribute
 
-Or to deploy only the bundle to the author, run
+Contributions are more than welcome in this project. Below are the steps, you can follow to contribute - 
 
-    mvn clean install -PautoInstallBundle
-
-## Testing
-
-There are three levels of testing contained in the project:
-
-* unit test in core: this show-cases classic unit testing of the code contained in the bundle. To test, execute:
-
-    mvn clean test
-
-* server-side integration tests: this allows to run unit-like tests in the AEM-environment, ie on the AEM server. To test, execute:
-
-    mvn clean verify -PintegrationTests
-
-* client-side Hobbes.js tests: JavaScript-based browser-side tests that verify browser-side behavior. To test:
-
-    in the browser, open the page in 'Developer mode', open the left panel and switch to the 'Tests' tab and find the generated 'MyName Tests' and run them.
-
-
-## Maven settings
-
-The project comes with the auto-public repository configured. To setup the repository in your Maven settings, refer to:
-
-    http://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html
+* Switch to the 'develop' branch of the repository
+* Clone the develop branch in your local system
+* Make your changes
+* Open a pull request against the 'develop' branch only.
